@@ -22,6 +22,7 @@ typedef struct { const char *p; ptrdiff_t n; } _GoString_;
 #line 3 "urbandictionary.go"
 
 #include <stdint.h>
+#include <stdlib.h>
 
 typedef struct {
    char*  definition;
@@ -32,9 +33,9 @@ typedef struct {
    char*  author;
    char*  word;
    int    defid;
-   char*  writtenOn;
+   char*  written_on;
    char*  example;
-   int    thumbsDown;
+   int    thumbs_down;
 } urban_dictionary_response;
 
 typedef struct {
@@ -102,6 +103,7 @@ extern urban_dictionary_response_t urban_dictionary_definition_by_id(int64_t id)
 extern urban_dictionary_response_t urban_dictionary_random(size_t* array_len);
 extern char* urban_dictionary_tool_tip(char* term, int* is_err);
 extern urban_dictionary_response_t urban_dictionary_data(char* input, int page);
+extern void urban_dictionary_response_clean(urban_dictionary_response* self);
 
 #ifdef __cplusplus
 }

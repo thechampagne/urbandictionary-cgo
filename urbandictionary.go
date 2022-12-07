@@ -2,6 +2,7 @@ package main
 
 /*
 #include <stdint.h>
+#include <stdlib.h>
 
 typedef struct {
    char*  definition;
@@ -12,9 +13,9 @@ typedef struct {
    char*  author;
    char*  word;
    int    defid;
-   char*  writtenOn;
+   char*  written_on;
    char*  example;
-   int    thumbsDown;
+   int    thumbs_down;
 } urban_dictionary_response;
 
 typedef struct {
@@ -51,9 +52,9 @@ func urban_dictionary_definition_by_id(id C.int64_t) C.urban_dictionary_response
 	response.author =  C.CString(res.Author)
 	response.word =  C.CString(res.Word)
 	response.defid =  C.int(res.Defid)
-	response.writtenOn =  C.CString(res.WrittenOn)
+	response.written_on =  C.CString(res.WrittenOn)
 	response.example =  C.CString(res.Example)
-	response.thumbsDown =  C.int(res.ThumbsDown)
+	response.thumbs_down =  C.int(res.ThumbsDown)
 	self.response = response
 	return self
 }
@@ -87,9 +88,9 @@ func urban_dictionary_random(array_len *C.size_t) C.urban_dictionary_response_t 
 		response.author =  C.CString(v.Author)
 		response.word =  C.CString(v.Word)
 		response.defid =  C.int(v.Defid)
-		response.writtenOn =  C.CString(v.WrittenOn)
+		response.written_on =  C.CString(v.WrittenOn)
 		response.example =  C.CString(v.Example)
-		response.thumbsDown =  C.int(v.ThumbsDown)
+		response.thumbs_down =  C.int(v.ThumbsDown)
 		slice[i] = response
 	}
 	self.response = (*C.urban_dictionary_response) (array)
@@ -136,13 +137,34 @@ func urban_dictionary_data(input *C.char, page C.int) C.urban_dictionary_respons
 		response.author =  C.CString(v.Author)
 		response.word =  C.CString(v.Word)
 		response.defid =  C.int(v.Defid)
-		response.writtenOn =  C.CString(v.WrittenOn)
+		response.written_on =  C.CString(v.WrittenOn)
 		response.example =  C.CString(v.Example)
-		response.thumbsDown =  C.int(v.ThumbsDown)
+		response.thumbs_down =  C.int(v.ThumbsDown)
 		slice[i] = response
 	}
 	self.response = (*C.urban_dictionary_response) (array)
 	return self
+}
+
+//export urban_dictionary_response_clean
+func urban_dictionary_response_clean(self *C.urban_dictionary_response) {
+	if self != nil {
+		if self.definition != nil { C.free(unsafe.Pointer(self.definition)) }
+		if self.permalink != nil { C.free(unsafe.Pointer(self.permalink)) }
+		if self.sound_urls != nil {
+			slice := (*[1<<30 - 1]*C.char)(unsafe.Pointer(self.sound_urls))[:self.sound_urls_len:self.sound_urls_len]
+			for i := 0 ; i < len(slice); i++ {
+				if slice[i] != nil {
+					C.free(unsafe.Pointer(slice[i]))
+				}
+			}
+			C.free(unsafe.Pointer(self.sound_urls))
+		}
+		if self.author != nil { C.free(unsafe.Pointer(self.author)) }
+		if self.word != nil { C.free(unsafe.Pointer(self.word)) }
+		if self.written_on != nil { C.free(unsafe.Pointer(self.written_on)) }
+		if self.example != nil { C.free(unsafe.Pointer(self.example)) }
+	}
 }
 
 func main() {}
